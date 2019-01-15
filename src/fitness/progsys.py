@@ -5,6 +5,7 @@ from os import path
 import subprocess
 import json
 import sys
+import errno
 
 
 class progsys(base_ff):
@@ -49,8 +50,13 @@ class progsys(base_ff):
                                 'variables': ['cases', 'caseQuality',
                                               'quality']})
 
-        self.eval.stdin.write((eval_json+'\n').encode())
+        #try:
+        encoded = (eval_json+'\n').encode()
+        self.eval.stdin.write(encoded)            
         self.eval.stdin.flush()
+        #except IOError as e:
+#             if e.errno == errno.EPIPE:
+#                 i = "nothing"
         result_json = self.eval.stdout.readline()
 
         result = json.loads(result_json.decode())
@@ -66,7 +72,7 @@ class progsys(base_ff):
     @staticmethod
     def create_eval_process():
         """create separate python process for evaluation"""
-        return subprocess.Popen(['python',
+        return subprocess.Popen(['python3',
                                  'scripts/python_script_evaluation.py'],
                                 stdout=subprocess.PIPE,
                                 stdin=subprocess.PIPE)

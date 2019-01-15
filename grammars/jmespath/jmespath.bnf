@@ -1,0 +1,74 @@
+<expression> ::= <sub-expression> | <index-expression> | <comparator-expression> | <or-expression> | <identifier> | <and-expression> | <not-expression> | <paren-expression> | "*" | <multi-select-list> | <multi-select-hash> | <literal> | <function-expression> | <pipe-expression> | <raw-string> | <current-node>
+<sub-expression> ::= <expression> "." ( <identifier> | <multi-select-list> | <multi-select-hash> | <function-expression> | "*" )
+<pipe-expression>  ::= <expression> "|" <expression>
+<or-expression>     ::= <expression> "||" <expression>
+<and-expression>    ::= <expression> "&&" <expression>
+<not-expression>    ::= "!" <expression>
+<paren-expression>  ::= "(" <expression> ")"
+<index-expression>  ::= <expression> <bracket-specifier> | <bracket-specifier>
+<multi-select-list> ::= "[" ( <expression> *( "," <expression> ) ) "]"
+<multi-select-hash> ::= "{" ( <keyval-expr> *( "," <keyval-expr> ) ) "}"
+<keyval-expr>       ::= <identifier> ":" <expression>
+<bracket-specifier> ::= "[" (<number> | "*" | <slice-expression>) "]" | "[]" | "[?" <expression> "]"
+<comparator-expression> ::= <expression> <comparator> <expression>
+<slice-expression>  ::= [<number>] ":" [<number>] [ ":" [<number>] ]
+<comparator>        ::= "<" | "<:=" | "==" | ">=" | ">" | "!="
+<function-expression> ::= <unquoted-string>  (
+                        <no-args>  |
+                        <one-or-more-args> )
+<no-args>             ::= "(" ")"
+<one-or-more-args>    ::= "(" ( <function-arg> *( "," <function-arg> ) ) ")"
+<function-arg>        ::= <expression> | <expression-type>
+<current-node>        ::= "@"
+<expression-type>     ::= "&" <expression>
+
+<raw-string>        ::= "'" *<raw-string-char> "'"
+<raw-string-char>   ::= (%x20-26 | %x28-5B | %x5D-10FFFF) | <preserved-escape> | <raw-string-escape>
+<preserved-escape>  ::= <escape> (%x20-26 | %28-5B | %x5D-10FFFF)
+<raw-string-escape> ::= <escape> ("'" | <escape>)
+<literal>           ::= "`" <json-value> "`"
+<unescaped-literal> ::= %x20-21 | %x23-5B |%x5D-5F | %x61-7A %x7C-10FFFF 
+<escaped-literal>   ::= <escaped-char> | (<escape> %x60)
+<number>            ::= ["-"]1*<digit>
+<digit>             ::= %x30-39
+<identifier>        ::= <unquoted-string> | <quoted-string>
+<unquoted-string>   ::= (%x41-5A | %x61-7A | %x5F) *( %x30-39  | %x41-5A | %x5F | %x61-7A)
+<quoted-string>     ::= <quote> 1*(<unescaped-char> | <escaped-char>) <quote>
+<unescaped-char>    ::= %x20-21 | %x23-5B | %x5D-10FFFF
+<escape>            ::= %x5C
+<quote>             ::= %x22
+<escaped-char>      ::= <escape> (%x22 | %x5C | %x2F | %x62 | 
+                        %x66 |
+                        %x6E |
+                        %x72 |
+                        %x74 |
+                        %x75 4HEXDIG )
+<json-value> ::= <false> | <null> | <true> | <json-object> | <json-array> | <json-number> | <json-quoted-string>
+<false> ::= %x66.61.6c.73.65
+<null>  ::= %x6e.75.6c.6c
+<true>  ::= %x74.72.75.65
+<json-quoted-string> ::= %x22 1*(<unescaped-literal> | <escaped-literal>) %x22
+<begin-array>     ::= <ws> %x5B <ws>
+<begin-object>    ::= <ws> %x7B <ws>
+<end-array>       ::= <ws> %x5D <ws>
+<end-object>      ::= <ws> %x7D <ws>
+<name-separator>  ::= <ws> %x3A <ws>
+<value-separator> ::= <ws> %x2C <ws>
+<ws>              ::= *(%x20 |
+                    %x09 |
+                    %x0A |
+                    %x0D  
+                   )
+<json-object> ::= <begin-object> [ <member> *( <value-separator> <member> ) ] <end-object>
+<member> ::= <quoted-string> <name-separator> <json-value>
+<json-array> ::= <begin-array> [ <json-value> *( <value-separator> <json-value> ) ] <end-array>
+<json-number> ::= [ <minus> ] <int> [ <frac> ] [ <exp> ]
+<decimal-point> ::= %x2E
+<digit1-9> ::= %x31-39
+<e> ::= %x65 | %x45
+<exp> ::= <e> [ <minus> | <plus> ] 1*DIGIT
+<frac> ::= <decimal-point> 1*DIGIT
+<int> ::= <zero> | ( <digit1-9> *DIGIT )
+<minus> ::= %x2D
+<plus> ::= %x2B
+<zero> ::= %x30
