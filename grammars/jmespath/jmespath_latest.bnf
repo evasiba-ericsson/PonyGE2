@@ -13,9 +13,7 @@
 <comparator-expression> ::= <expression> <comparator> <expression>
 <slice-expression>  ::= [<number>] ":" [<number>] [ ":" [<number>] ]
 <comparator>        ::= "<" | "<:=" | "==" | ">=" | ">" | "!="
-<function-expression> ::= <unquoted-string>  (
-                        <no-args>  |
-                        <one-or-more-args> )
+<function-expression> ::= "sort(" <no-args> ) | "sort("<one-or-more-args> ) | "join(" <no-args> ) | "join("<one-or-more-args> ) | <unquoted-string> ( <no-args>) | <unquoted-string> ( <one-or-more-args> )
 <no-args>             ::= "(" ")"
 <one-or-more-args>    ::= "(" ( <function-arg> *( "," <function-arg> ) ) ")"
 <function-arg>        ::= <expression> | <expression-type>
@@ -32,7 +30,7 @@
 <number>            ::= ["-"]1*<digit>
 <digit>             ::= '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'
 <hexdig>	    ::=	'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|'A'|'B'|'C'|'D'|'E'|'F'
-<identifier>        ::= <unquoted-string> | <quoted-string>
+<identifier>        ::= <unquoted-string> | <quoted-string> | "locations" | "state" | "name" | "WashingtonCities"
 <unquoted-string>   ::= ('A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'_') *('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'_')
 <quoted-string>     ::= <quote> 1*(<unescaped-char> | <escaped-char>) <quote>
 <unescaped-char>    ::= ' '|'!'| '#'|'$'|'%'|'&'|'''|'('|')'|'*'|'+'|','|'-'|'.'|'/'|'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|':'|';'|'<'|'='|'>'|'?'|'@'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'[' |']'|'^'|'_'|'`'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'{'|'|'|'}'|'~'
@@ -54,8 +52,7 @@
                     '	' |
                     %x0A |
                     '
-'  
-                   )
+')
 <json-object> ::= <begin-object> [ <member> *( <value-separator> <member> ) ] <end-object>
 <member> ::= <quoted-string> <name-separator> <json-value>
 <json-array> ::= <begin-array> [ <json-value> *( <value-separator> <json-value> ) ] <end-array>

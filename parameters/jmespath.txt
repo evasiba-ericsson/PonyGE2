@@ -6,7 +6,7 @@ DATASET_TRAIN:          Compare String Lengths/Train.txt
 DATASET_TEST:           Compare String Lengths/Test.txt
 DEBUG:                  True
 ERROR_METRIC:           mse
-GENERATIONS:            5000
+GENERATIONS:            500
 MAX_GENOME_LENGTH:      500
 GRAMMAR_FILE:           jmespath/jmespath_latest.bnf
 INITIALISATION:         PI_grow

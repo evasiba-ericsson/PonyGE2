@@ -1,10 +1,11 @@
 from algorithm.parameters import params
 from fitness.base_ff_classes.base_ff import base_ff
 
+from difflib import SequenceMatcher
+
 import sys
 
 class jmespath(base_ff):
-    
     def __init__(self):
         # Initialise base fitness function class.
         super().__init__()
@@ -13,12 +14,12 @@ class jmespath(base_ff):
 #             self.get_data(params['DATASET_TRAIN'], params['DATASET_TEST'])
 #         self.eval = self.create_eval_process()
         if params['MULTICORE']:
-            print("Warming: Multicore is not supported with progsys "
+            print("Warning: Multicore is not supported with progsys "
                   "as fitness function.\n"
                   "Fitness function only allows sequential evaluation.")
             
     def evaluate(self, ind, **kwargs):
         phenotype = ind.phenotype
-        if (phenotype == "locations[?state == 'WA'].name | sort(@) | {WashingtonCities: join(', ', @)}") :
-            return 1;
-        return sys.maxsize
+        target = "locations[?state == 'WA'].name | sort(@) | {WashingtonCities: join(', ', @)}"
+        similarity_metric = 1.0 - SequenceMatcher(None, target, phenotype).ratio() 
+        return similarity_metric
