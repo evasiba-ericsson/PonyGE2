@@ -1,5 +1,5 @@
 <expression> ::= <sub-expression> | <index-expression> | <comparator-expression> | <or-expression> | <identifier> | <and-expression> | <not-expression> | <paren-expression> | "*" | <multi-select-list> | <multi-select-hash> | <literal> | <function-expression> | <pipe-expression> | <raw-string> | <current-node>
-<sub-expression> ::= <expression> "." ( <identifier> | <multi-select-list> | <multi-select-hash> | <function-expression> | "*" )
+<sub-expression> ::= <expression>"."<identifier> | <expression>"."<multi-select-list> | <expression>"."<multi-select-hash> | <expression>"."<function-expression> | <expression>".""*" 
 <pipe-expression>  ::= <expression> "|" <expression>
 <or-expression>     ::= <expression> "||" <expression>
 <and-expression>    ::= <expression> "&&" <expression>
@@ -13,21 +13,20 @@
 <comparator-expression> ::= <expression> <comparator> <expression>
 <slice-expression>  ::= [<number>] ":" [<number>] [ ":" [<number>] ]
 <comparator>        ::= "<" | "<:=" | "==" | ">=" | ">" | "!="
-<function-expression> ::= "sort(" <no-args> ) | "sort("<one-or-more-args> ) | "join(" <no-args> ) | "join("<one-or-more-args> ) | <unquoted-string> ( <no-args>) | <unquoted-string> ( <one-or-more-args> )
+<function-expression> ::= "sort" <no-args> | "sort"<one-or-more-args> | "join" <no-args>  | "join" <one-or-more-args>
 <no-args>             ::= "(" ")"
 <one-or-more-args>    ::= "("<function-arg> ")" | "("<function-arg> "," <one-or-more-args>")"
 <function-arg>        ::= <expression> | <expression-type>
 <current-node>        ::= "@"
 <expression-type>     ::= "&" <expression>
 
-<raw-string>        ::= "'" *<raw-string-char> "'" | 'WA'
-<raw-string-char>   ::= (' '|'!'|'"'|'#'|'$'|'%'|'&'| '('|')'|'*'|'+'|','|'-'|'.'|'/'|'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|':'|';'|'<'|'='|'>'|'?'|'@'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'[' |']'|'^'|'_'|'`'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'{'|'|'|'}'|'~') | <preserved-escape> | <raw-string-escape>
-<preserved-escape>  ::= <escape> (' '|'!'|'"'|'#'|'$'|'%'| '&'|'('|')'|'*'|'+'|','|'-'|'.'|'/'|'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|':'|';'|'<'|'='|'>'|'?'|'@'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'[' |']'|'^'|'_'|'`'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'{'|'|'|'}'|'~')
+<raw-string>        ::=  "'"'WA'"'"
 <raw-string-escape> ::= <escape> "'" | <escape> <escape>
 <literal>           ::= "`" <json-value> "`"
 <unescaped-literal> ::= ' '|'!'|'#'|'$'|'%'|'&'|'''|'('|')'|'*'|'+'|','|'-'|'.'|'/'|'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|':'|';'|'<'|'='|'>'|'?'|'@'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'[' |']'|'^'|'_'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'|'|'}'|'~'
 <escaped-literal>   ::= <escaped-char> | <escape> '`'
-<number>            ::= ["-"]1*<digit>
+<number>            ::= "-"<digit-sequence> | <digit-sequence>
+<digit-sequence>   ::= <digit> | <digit> <digit-sequence>
 <digit>             ::= '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'
 <hexdig>	    ::=	'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|'A'|'B'|'C'|'D'|'E'|'F'
 <identifier>        ::= <unquoted-string> | <quoted-string> | "locations" | "state" | "name" | "WashingtonCities"

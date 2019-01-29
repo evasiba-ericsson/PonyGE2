@@ -6,9 +6,9 @@ DATASET_TRAIN:          Compare String Lengths/Train.txt
 DATASET_TEST:           Compare String Lengths/Test.txt
 DEBUG:                  True
 ERROR_METRIC:           mse
-GENERATIONS:            500
+GENERATIONS:            1000
 MAX_GENOME_LENGTH:      500
-GRAMMAR_FILE:           jmespath/jmespath_latest.bnf
+GRAMMAR_FILE:           jmespath/jmespath_latest_trimmed.bnf
 INITIALISATION:         PI_grow
 INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    10
@@ -20,3 +20,4 @@ REPLACEMENT:            generational
 SELECTION:              tournament
 TOURNAMENT_SIZE:        5
 VERBOSE:                False
+ELITE_SIZE  		5
