@@ -1,57 +1,54 @@
-<expression> ::= <sub-expression> | <index-expression> | <comparator-expression> | <or-expression> | <identifier> | <and-expression> | <not-expression> | <paren-expression> | "*" | <multi-select-list> | <multi-select-hash> | <literal> | <function-expression> | <pipe-expression> | <raw-string> | <current-node>
-<sub-expression> ::= <expression>"."<identifier> | <expression>"."<multi-select-list> | <expression>"."<multi-select-hash> | <expression>"."<function-expression> | <expression>".""*" 
+<expression> ::= <sub-expression> | <index-expression> | <comparator-expression> | <or-expression> | <identifier> | <and-expression> | <not-expression> | <paren-expression> | <multi-select-list> | <multi-select-hash> | <literal> | <function-expression> | <pipe-expression> | <raw-string> | <current-node>
+<sub-expression> ::= <expression>"."<identifier> | <expression>"."<multi-select-list> | <expression>"."<multi-select-hash> | <expression>"."<function-expression> | <expression>".*" | "*."<expression>
 <pipe-expression>  ::= <expression> "|" <expression>
 <or-expression>     ::= <expression> "||" <expression>
 <and-expression>    ::= <expression> "&&" <expression>
 <not-expression>    ::= "!" <expression>
 <paren-expression>  ::= "(" <expression> ")"
 <index-expression>  ::= <expression> <bracket-specifier> | <bracket-specifier>
-<multi-select-list> ::= "[" ( <expression> *( "," <expression> ) ) "]"
-<multi-select-hash> ::= "{" ( <keyval-expr> *( "," <keyval-expr> ) ) "}"
+<multi-select-list> ::= "[" <comma-expression>  "]"
+<comma-expression>::= <expression> | <comma-expression> 
+<multi-select-hash> ::= "{" <comma-keyval-expr> "}"
+<comma-keyval-expr>::= <keyval-expr> | <comma-keyval-expr> 
 <keyval-expr>       ::= <identifier> ":" <expression>
 <bracket-specifier> ::= "[" <number> "]" | "[" "*" "]" | "[" <slice-expression> "]" | "[]" | "[?" <expression> "]"
 <comparator-expression> ::= <expression> <comparator> <expression>
-<slice-expression>  ::= [<number>] ":" [<number>] [ ":" [<number>] ]
-<comparator>        ::= "<" | "<:=" | "==" | ">=" | ">" | "!="
-<function-expression> ::= "sort" <no-args> | "sort"<one-or-more-args> | "join" <no-args>  | "join" <one-or-more-args>
-<no-args>             ::= "(" ")"
-<one-or-more-args>    ::= "("<function-arg> ")" | "("<function-arg> "," <one-or-more-args>")"
+<slice-expression>  ::= <number> ":" <number> ":" <number> | ":" <number> ":" <number> | <number> ":" ":" <number> | <number> ":" <number> ":"  | <number> ":"":" | ":" <number> ":" | ":"":" <number>
+<comparator>        ::= "<" | "<=" | "==" | ">=" | ">" | "!="
+<function-expression> ::= "sort("<function-arg>")" | "join(" <raw-string> "," <function-arg>")"
+<no-args>             ::= "("")"
+<one-or-more-args>    ::= "("<comma-one-or-more-args>")"
+<join-glue-string>  ::= "`"  "`"
+<comma-one-or-more-args>::= <function-arg> | <function-arg> "," <one-or-more-args>
 <function-arg>        ::= <expression> | <expression-type>
 <current-node>        ::= "@"
 <expression-type>     ::= "&" <expression>
 
-<raw-string>        ::=  "'"'WA'"'"
+<raw-string>        ::=  "'"<raw-string-chars>"'"
+<raw-string-chars>  ::= <raw-string-char> | <raw-string-char><raw-string-chars>
+<raw-string-char>   ::= ' '|'!'|'"'|'#'|'$'|'%'|'&'| '('|')'|'*'|'+'|','|'-'|'.'|'/'|'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|':'|';'|'<'|'='|'>'|'?'|'@'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'[' |']'|'^'|'_'|'`'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'{'|'|'|'}'|'~' | <raw-string-escape>
 <raw-string-escape> ::= <escape> "'" | <escape> <escape>
 <literal>           ::= "`" <json-value> "`"
-<unescaped-literal> ::= ' '|'!'|'#'|'$'|'%'|'&'|'''|'('|')'|'*'|'+'|','|'-'|'.'|'/'|'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|':'|';'|'<'|'='|'>'|'?'|'@'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'[' |']'|'^'|'_'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'|'|'}'|'~'
 <escaped-literal>   ::= <escaped-char> | <escape> '`'
 <number>            ::= "-"<digit-sequence> | <digit-sequence>
-<digit-sequence>   ::= <digit> | <digit> <digit-sequence>
+<digit-sequence>   ::= <digit> | <digit><digit-sequence>
 <digit>             ::= '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'
 <hexdig>	    ::=	'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|'A'|'B'|'C'|'D'|'E'|'F'
-<identifier>        ::= <unquoted-string> | <quoted-string> | "locations" | "state" | "name" | "WashingtonCities"
-<unquoted-string>   ::= ('A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'_') *('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'_')
-<quoted-string>     ::= <quote> 1*(<unescaped-char> | <escaped-char>) <quote>
-<unescaped-char>    ::= ' '|'!'| '#'|'$'|'%'|'&'|'''|'('|')'|'*'|'+'|','|'-'|'.'|'/'|'0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|':'|';'|'<'|'='|'>'|'?'|'@'|'A'|'B'|'C'|'D'|'E'|'F'|'G'|'H'|'I'|'J'|'K'|'L'|'M'|'N'|'O'|'P'|'Q'|'R'|'S'|'T'|'U'|'V'|'W'|'X'|'Y'|'Z'|'[' |']'|'^'|'_'|'`'|'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z'|'{'|'|'|'}'|'~'
+<identifier>        ::= "locations" | "state" | "name"
+<quoted-string>     ::= <quote><raw-string-chars><quote>
 <escape>            ::= %x5C
 <quote>             ::= '"'
 <escaped-char>      ::= <escape> ('"'|%x5C|'/'|'b'|'f'|'n'|'r'|'t'|'u' 4<hexdig> )
-<json-value> ::= <false> | <null> | <true> | <json-object> | <json-array> | <json-number> | <json-quoted-string>
+<json-value> ::= <false> | <null> | <true> | <json-object> | <json-array> | <json-number> | <quoted-string>
 <false> ::= 'false'
 <null>  ::= 'null'
 <true>  ::= 'true'
-<json-quoted-string> ::= '"' 1*(<unescaped-literal> | <escaped-literal>) '"'
-<begin-array>     ::= <ws> '[' <ws>
-<begin-object>    ::= <ws> '{' <ws>
-<end-array>       ::= <ws> ']' <ws>
-<end-object>      ::= <ws> '}' <ws>
-<name-separator>  ::= <ws> ':' <ws>
-<value-separator> ::= <ws> ',' <ws>
-<ws>              ::= *(' ' |
-                    '	' |
-                    %x0A |
-                    '
-')
+<begin-array>     ::= '['
+<begin-object>    ::= '{'
+<end-array>       ::= ']'
+<end-object>      ::= '}' 
+<name-separator>  ::= ':'
+<value-separator> ::= ',' 
 <json-object> ::= <begin-object> [ <member> *( <value-separator> <member> ) ] <end-object>
 <member> ::= <quoted-string> <name-separator> <json-value>
 <json-array> ::= <begin-array> [ <json-value> *( <value-separator> <json-value> ) ] <end-array>
